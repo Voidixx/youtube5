@@ -1,5 +1,103 @@
-<script type="module">
-  import './config.js';
-  import './chat.js';
-  import './game.js';
-</script>
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat Rocket League</title>
+  <style>
+    canvas { background: #222; display: block; margin: auto; }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="900" height="600"></canvas>
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");const car = {
+  x: 100,
+  y: 300,
+  angle: 0,
+  speed: 0,
+  boost: false
+};
+
+const ball = {
+  x: 450,
+  y: 300,
+  vx: 3,
+  vy: 2,
+  radius: 15
+};
+
+const keys = {};
+
+document.addEventListener("keydown", e => keys[e.key] = true);
+document.addEventListener("keyup", e => keys[e.key] = false);
+
+function updateGame() {
+  // Car control
+  if (keys["w"]) car.speed += 0.2;
+  if (keys["s"]) car.speed -= 0.2;
+  if (keys["a"]) car.angle -= 0.05;
+  if (keys["d"]) car.angle += 0.05;
+
+  car.speed *= 0.98;
+  car.x += Math.cos(car.angle) * car.speed;
+  car.y += Math.sin(car.angle) * car.speed;
+
+  // Ball physics
+  ball.x += ball.vx;
+  ball.y += ball.vy;
+
+  if (ball.x < ball.radius || ball.x > canvas.width - ball.radius) ball.vx *= -1;
+  if (ball.y < ball.radius || ball.y > canvas.height - ball.radius) ball.vy *= -1;
+
+  const dx = ball.x - car.x;
+  const dy = ball.y - car.y;
+  const dist = Math.hypot(dx, dy);
+  if (dist < 30) {
+    ball.vx += (dx / dist) * 2;
+    ball.vy += (dy / dist) * 2;
+  }
+
+  draw();
+  requestAnimationFrame(updateGame);
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Ball
+  ctx.fillStyle = "white";
+  ctx.beginPath();
+  ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Car
+  ctx.save();
+  ctx.translate(car.x, car.y);
+  ctx.rotate(car.angle);
+  ctx.fillStyle = "cyan";
+  ctx.fillRect(-15, -10, 30, 20);
+  ctx.restore();
+}
+
+function handleChatCommand(command) {
+  if (command.includes("!boost")) {
+    car.speed += 5;
+  }
+  if (command.includes("!ball")) {
+    ball.vx += (Math.random() - 0.5) * 10;
+    ball.vy += (Math.random() - 0.5) * 10;
+  }
+  if (command.includes("!bomb")) {
+    ball.vx = -ball.vx;
+    ball.vy = -ball.vy;
+  }
+}
+
+// For testing chat commands without YouTube API
+window.testCommand = handleChatCommand;
+
+updateGame();
+
+  </script>
+</body>
+</html>
