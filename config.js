@@ -1,5 +1,5 @@
 
 const CONFIG = {
-  apiKey: 'YOUR_YOUTUBE_API_KEY',
+  apiKey: 'AIzaSyAHopdEw2JkJgMG8JO2wyvQcIH4hJNgcOI',
   liveChatId: 'YOUR_LIVE_CHAT_ID'
 };
