@@ -1,103 +1,89 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Chat Rocket League</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Device Check</title>
   <style>
-    canvas { background: #222; display: block; margin: auto; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
+    }
+
+    .card {
+      background: #2a2a2a;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      max-width: 350px;
+    }
+
+    .card img {
+      width: 300px;
+      height: 300px;
+      border-radius: 15px;
+      object-fit: cover;
+    }
+
+    .card h1 {
+      margin-top: 1rem;
+      font-size: 1.5rem;
+    }
+
+    .card p {
+      margin: 1rem 0;
+      font-size: 1rem;
+    }
+
+    .exit-btn {
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      background-color: crimson;
+      color: white;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .exit-btn:hover {
+      background-color: darkred;
+    }
+
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <canvas id="gameCanvas" width="900" height="600"></canvas>
+
+  <div class="card" id="mobile-warning" class="hidden">
+    <img src="https://via.placeholder.com/300.png?text=Logo" alt="Logo">
+    <h1>Mobile Not Supported</h1>
+    <p>This website doesn't work on mobile devices. Please visit on a desktop or laptop.</p>
+    <button class="exit-btn" onclick="window.close()">Exit</button>
+  </div>
+
   <script>
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");const car = {
-  x: 100,
-  y: 300,
-  angle: 0,
-  speed: 0,
-  boost: false
-};
+    function isMobile() {
+      return /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
 
-const ball = {
-  x: 450,
-  y: 300,
-  vx: 3,
-  vy: 2,
-  radius: 15
-};
-
-const keys = {};
-
-document.addEventListener("keydown", e => keys[e.key] = true);
-document.addEventListener("keyup", e => keys[e.key] = false);
-
-function updateGame() {
-  // Car control
-  if (keys["w"]) car.speed += 0.2;
-  if (keys["s"]) car.speed -= 0.2;
-  if (keys["a"]) car.angle -= 0.05;
-  if (keys["d"]) car.angle += 0.05;
-
-  car.speed *= 0.98;
-  car.x += Math.cos(car.angle) * car.speed;
-  car.y += Math.sin(car.angle) * car.speed;
-
-  // Ball physics
-  ball.x += ball.vx;
-  ball.y += ball.vy;
-
-  if (ball.x < ball.radius || ball.x > canvas.width - ball.radius) ball.vx *= -1;
-  if (ball.y < ball.radius || ball.y > canvas.height - ball.radius) ball.vy *= -1;
-
-  const dx = ball.x - car.x;
-  const dy = ball.y - car.y;
-  const dist = Math.hypot(dx, dy);
-  if (dist < 30) {
-    ball.vx += (dx / dist) * 2;
-    ball.vy += (dy / dist) * 2;
-  }
-
-  draw();
-  requestAnimationFrame(updateGame);
-}
-
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Ball
-  ctx.fillStyle = "white";
-  ctx.beginPath();
-  ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Car
-  ctx.save();
-  ctx.translate(car.x, car.y);
-  ctx.rotate(car.angle);
-  ctx.fillStyle = "cyan";
-  ctx.fillRect(-15, -10, 30, 20);
-  ctx.restore();
-}
-
-function handleChatCommand(command) {
-  if (command.includes("!boost")) {
-    car.speed += 5;
-  }
-  if (command.includes("!ball")) {
-    ball.vx += (Math.random() - 0.5) * 10;
-    ball.vy += (Math.random() - 0.5) * 10;
-  }
-  if (command.includes("!bomb")) {
-    ball.vx = -ball.vx;
-    ball.vy = -ball.vy;
-  }
-}
-
-// For testing chat commands without YouTube API
-window.testCommand = handleChatCommand;
-
-updateGame();
-
+    if (isMobile()) {
+      document.getElementById("mobile-warning").classList.remove("hidden");
+    } else {
+      // Redirect to main website or homepage if not mobile
+      window.location.href = "your_desktop_site.html"; // Replace with your actual site
+    }
   </script>
+
 </body>
 </html>
